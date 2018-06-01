@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.proregisterbackend.mapper.OrganizationTotalMapper">
+
+    <select id="queryOrganizationTotal" resultType="map">
+        SELECT
+         o.Organ_Name AS OrganName ,o.Report_Date AS ReportDate ,o.Unable_Storage_Contract_Count AS UnableStorageContractCount
+        FROM
+            organ_report_cond_detail o
+        LEFT JOIN
+         unable_storge_contract_info u ON o.Organ_Id = u.Organ_Id
+        <where>
+            <if test="IsStoreTag !=null and IsStoreTag !=''">
+              AND o.Is_Store_Tag =#{IsStoreTag}
+            </if>
+            <if test="OrganName != null and OrganName !=''">
+              AND o.Organ_Name LIKE concat('%',#{OrganName},'%')
+            </if>
+            <if test="UnableStoreReason != null and UnableStoreReason!=''">
+                AND u.Unable_Store_Reason =#{UnableStoreReason}
+            </if>
+        </where>
+        ORDER BY o.Report_Date DESC
+    </select>
+
+    <select id="queryIssueContractDetails" resultType="map">
+        SELECT
+            u.Unable_Store_Contract_Number,
+            u.Unable_Store_Reason
+        FROM
+            unable_storge_contract_info u
+        WHERE u.Organ_Name =#{OrganName} AND u.Report_Date =#{ReportDate}
+    </select>
+
+
+</mapper>
